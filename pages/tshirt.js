@@ -1,19 +1,20 @@
 import Link from 'next/link'
-import React from 'react'
+import React,{useState} from 'react'
 import Product from "@/schema/Product"; 
 import mongoose from 'mongoose';
 
 
 function Tshirt({products}) {
-  console.log(products)
+  
+  const [avaiColor, setAvaiColor]= useState(["white","red","black","pink","yellow","green","blue","purple","brown",'peach','orange','gray'])
   return (
     <div >
     <section className="text-gray-600  body-font">
   <div className="container px-10 py-24 mx-auto">
     <div className="flex flex-wrap -m-4 justify-center">
         {Object.keys(products).map((item)=>{return<Link key={products[item]._id} href={`/product/${products[item].slug}`} className="ml-9">
-        <div className="p-6 w-[80vw] md:w-full shadow-lg "><div className="block relative rounded overflow-hidden">
-          <img alt="ecommerce" className="px-10 h-[28vh] w-[13.5vw] block" src={products[item].img}/>
+        <div className="p-6 w-[80vw] md:w-[18vw] shadow-lg my-5"><div className="block relative rounded overflow-hidden">
+          <img alt="ecommerce" className="px-10 md:h-[30vh] md:w-[13.5vw] block" src={products[item].img}/>
         </div>
         <div className="mt-4 text-center md:text-left">
           <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">DamnGood</h3>
@@ -25,22 +26,15 @@ function Tshirt({products}) {
           {products[item].size.includes('l') && <span className='border border-gray-300 px-1 mr-1'>L </span> }
           {products[item].size.includes('xl') && <span className='border border-gray-300 px-1 mr-1'>XL </span>}</div>
           <div className="mt-2">
-          {products[item].color.includes('red') && <button className='border-2 border-gray-300 p-1 mr-1 bg-red-700 rounded-full w-6 h-6 focus:outline-none'></button>} 
-          {products[item].color.includes('blue') && <button className='border-2 border-gray-300 p-1 mr-1 bg-blue-700 rounded-full w-6 h-6 focus:outline-none'></button>} 
-          {products[item].color.includes('black') && <button className='border-2 border-gray-300 p-1 mr-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none'></button> }
-          {products[item].color.includes('pink') && <button  className='border-2 border-gray-300 p-1 mr-1 bg-pink-700 rounded-full w-6 h-6 focus:outline-none'></button>}</div>
+          {avaiColor.map((col)=>{return products[item].color.includes(col) && <button className='border-2 border-gray-300 p-1 mr-1 rounded-full w-6 h-6 focus:outline-none' style={{backgroundColor:`${col}`}}></button>})}</div>
         </div></div></Link>})}
-      </div>
-      
-      
-    
-  </div>
+      </div> </div>
 </section></div>
   )
 }
 export async function getServerSideProps(context) {
   if(!mongoose.connections[0].readyState){
-  await mongoose.connect(process.env.MONGO_URI); 
+  await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI); 
 }
 
 let products = await Product.find({category:"tshirt"});
@@ -58,7 +52,10 @@ let tshirts = {};
                 if(item.availableQty>0){
                     tshirts[item.title].color=[item.color]
                     tshirts[item.title].size=[item.size]
-
+                }
+                else{
+                  tshirts[item.title].color=[]
+                  tshirts[item.title].size=[]
                 }
             
         }
@@ -68,5 +65,5 @@ let tshirts = {};
   return {
     props: {products: JSON.parse(JSON.stringify(tshirts))}, // will be passed to the page component as props
   }
-} 
+}
 export default Tshirt

@@ -2,23 +2,38 @@ const mongoose = require('mongoose')
 
 
 const OrderSchema = new mongoose.Schema({
-    userId: {type:string,required:true},
-    products:[{
-        
-        productId:{type: String},
-        quantity:{type: Number,default:1}
-        
-    }],
+    email: {type:String,required:true},
+    orderId: {type:String,required:true},
+    paymentInfo: {type:String,default:''},
+    products:{type:Object,required:true},
     address:{
-        type:string,
+        type:String,
         required:true
     },
-    amount:{
+    address:{
+        type:String,
+        required:true
+    },
+    city:{
+        type:String,
+        required:true
+    },
+    pincode:{
         type: Number,
         required:true
     },
-    status:{type:string,
-    required:true,default:'Pending'}
+    phone:{
+        type:String,
+        required:true
+    },
+    name:{
+        type:String,
+        required:true
+    },
+    status:{type:String,
+    required:true,default:'Pending'},
+    deliveryStatus:{type:String,required:true,default:'pending'},
+    amount:{type:String,required:true}
 
 },{timestamps:true})
 mongoose.models={}

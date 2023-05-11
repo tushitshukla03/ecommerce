@@ -1,105 +1,119 @@
 import Head from 'next/head'
-import Image from 'next/image'
+import {BrowserView, MobileView} from 'react-device-detect';
 import { Inter } from 'next/font/google'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
 
+import Link from 'next/link'
+import React,{useState} from 'react'
+import Product from "@/schema/Product"; 
+import mongoose from 'mongoose'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+export default function Home(t) {
+  
+ 
   return (
     <>
       <Head>
-        <title>Merch.com</title>
-        <meta name="description" content="Merch.com-Wear the style." />
+        <title>Buy T-Shirts and Hoodies Online|DamnGood Apparel</title>
+        <meta name="keywords" content="t-shirts, hoodies, graphic tees, funny t-shirts, vintage t-shirts, cool t-shirts, designer t-shirts, custom t-shirts, cotton t-shirts, printed t-shirts, sleeveless t-shirts, long sleeve t-shirts, zip-up hoodies, pullover hoodies, sweatshirts, college t-shirts, sports t-shirts, music t-shirts, animal t-shirts, political t-shirts"></meta>
+        <meta name="description" content="Find the perfect t-shirt or hoodie to express your unique style. Shop DamnGood Apparel's collection of high-quality, affordable clothing today." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>
-         <img src='/landing.jpg' alt=''/>
-      </div>
-      <section className="text-gray-600 body-font">
-  <div className="container px-5 py-24 mx-auto">
-    <div className="flex flex-wrap w-full mb-20 flex-col items-center text-center">
-      <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Wear the style with DamnGood</h1>
-      <p className="lg:w-1/2 w-full leading-relaxed text-gray-500">The most stylist and coolest Clothing Brand</p>
+   
+<BrowserView><section>
+<div className=" text-white py-20 h-screen">
+  <div className="container mx-auto flex flex-col md:flex-row items-center my-12 md:my-24">
+    <div className="flex flex-col w-full lg:w-1/3 justify-center items-start p-8">
+      <h1 className="text-3xl md:text-5xl  text-teal-900 tracking-loose">End Year Sale</h1>
+      <h2 className="text-3xl md:text-5xl text-gray-500 leading-relaxed md:leading-snug mb-2">Best Brands
+      </h2>
+      <p className="text-sm md:text-base text-gray-400 mb-4">Explore the wide range of fashion products at the<br></br>
+       best prices </p>
+      <Link href={'/tshirt'}
+        className="bg-transparent hover:bg-gray-300 text-gray-600 hover:text-black rounded shadow hover:shadow-lg py-2 px-4 border border-gray-300 hover:border-transparent">
+        Explore Now</Link>
     </div>
-    <div className="flex flex-wrap -m-4">
-      <div className="xl:w-1/3 md:w-1/2 p-4">
-        <div className="border border-gray-200 p-6 rounded-lg">
-          <div className="w-10 h-10 inline-flex items-center justify-center rounded-full bg-black-100 text-black-500 mb-4">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-6 h-6" viewBox="0 0 24 24">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-            </svg>
+    <div className="p-8 mt-12 mb-6 md:mb-0 md:mt-0 ml-0 md:ml-12 lg:w-2/3  justify-center">
+      <div className="h-48 flex flex-wrap content-center">
+        <div>
+          <img className="inline-block mt-28 hidden xl:block" src={`${t.t[0]}`}/></div>
+          <div>
+            <img className="inline-block mt-24 md:mt-0 p-8 md:p-0"  src={`${t.t[1]}`}/></div>
+            <div>
+              <img className="inline-block mt-28 hidden lg:block" src={`${t.t[2]}`}/></div>
+            </div>
           </div>
-          <h2 className="text-lg text-gray-900 font-medium title-font mb-2">Shooting Stars</h2>
-          <p className="leading-relaxed text-base">Fingerstache flexitarian street art 8-bit waist co, subway tile poke farm.</p>
+
         </div>
       </div>
-      <div className="xl:w-1/3 md:w-1/2 p-4">
-        <div className="border border-gray-200 p-6 rounded-lg">
-          <div className="w-10 h-10 inline-flex items-center justify-center rounded-full bg-black-100 text-black-500 mb-4">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-6 h-6" viewBox="0 0 24 24">
-              <circle cx="6" cy="6" r="3"></circle>
-              <circle cx="6" cy="18" r="3"></circle>
-              <path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"></path>
-            </svg>
+</section></BrowserView>
+<MobileView>
+    <div className="relative flex flex-col-reverse px-4 py-16 mx-auto lg:block lg:flex-col lg:py-32 xl:py-48 md:px-8 sm:max-w-xl md:max-w-full">
+      <div className="z-0 flex justify-center h-full -mx-4 overflow-hidden lg:pt-24 lg:pb-16 lg:pr-8 xl:pr-0 lg:w-1/2 lg:absolute lg:justify-end lg:bottom-0 lg:left-0 lg:items-center">
+        <img
+          src={`${t.t[0]}`}
+          className="object-cover object-right h-auto lg:w-auto lg:h-full z-20"
+          alt=""
+        />
+        <img
+          src={`${t.t[1]}`}
+          className="object-cover object-right h-auto lg:w-auto lg:h-full -z-20 -mx-2"
+          alt=""
+        />
+        <img
+          src={`${t.t[2]}`}
+          className="object-cover object-right h-auto lg:w-auto lg:h-full z-20"
+          alt=""
+        />
+      </div>
+      <div className="relative flex justify-end max-w-xl mx-auto xl:pr-32 lg:max-w-screen-xl">
+        <div className="mb-16 lg:pr-5 lg:max-w-lg lg:mb-0">
+          <div className="max-w-xl mb-6">
+            <div>
+              <p className="inline-block mx-1 py-px mb-4 text-xs font-semibold tracking-wider text-teal-900 uppercase rounded-full bg-teal-accent-400">
+                End Year Sale
+              </p>
+            </div>
+            <h2 className="max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none">
+             Explore the wide range{' '}
+              <br className="hidden md:block" />
+              of fashion products{' '}
+              <span className="inline-block text-deep-purple-accent-400">
+              at best prices
+              </span>
+            </h2>
+            <p className="text-base text-gray-700 md:text-lg mb-5">
+              Unleash Your Shopping Desire at DAMNGOOD <br></br>Where Dreams Become Delivered!
+            </p>
+            <Link href={'/tshirt'}
+            className="bg-transparent hover:bg-gray-300 text-gray-600 hover:text-black rounded shadow hover:shadow-lg py-2 px-4 border border-gray-400 hover:border-transparent">
+            Explore Now</Link>
           </div>
-          <h2 className="text-lg text-gray-900 font-medium title-font mb-2">The Catalyzer</h2>
-          <p className="leading-relaxed text-base">Fingerstache flexitarian street art 8-bit waist co, subway tile poke farm.</p>
         </div>
       </div>
-      <div className="xl:w-1/3 md:w-1/2 p-4">
-        <div className="border border-gray-200 p-6 rounded-lg">
-          <div className="w-10 h-10 inline-flex items-center justify-center rounded-full bg-black-100 text-black-500 mb-4">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-6 h-6" viewBox="0 0 24 24">
-              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </div>
-          <h2 className="text-lg text-gray-900 font-medium title-font mb-2">Neptune</h2>
-          <p className="leading-relaxed text-base">Fingerstache flexitarian street art 8-bit waist co, subway tile poke farm.</p>
-        </div>
-      </div>
-      <div className="xl:w-1/3 md:w-1/2 p-4">
-        <div className="border border-gray-200 p-6 rounded-lg">
-          <div className="w-10 h-10 inline-flex items-center justify-center rounded-full bg-black-100 text-black-500 mb-4">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-6 h-6" viewBox="0 0 24 24">
-              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path>
-            </svg>
-          </div>
-          <h2 className="text-lg text-gray-900 font-medium title-font mb-2">Melanchole</h2>
-          <p className="leading-relaxed text-base">Fingerstache flexitarian street art 8-bit waist co, subway tile poke farm.</p>
-        </div>
-      </div>
-      <div className="xl:w-1/3 md:w-1/2 p-4">
-        <div className="border border-gray-200 p-6 rounded-lg">
-          <div className="w-10 h-10 inline-flex items-center justify-center rounded-full bg-black-100 text-black-500 mb-4">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-6 h-6" viewBox="0 0 24 24">
-              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
-            </svg>
-          </div>
-          <h2 className="text-lg text-gray-900 font-medium title-font mb-2">Bunker</h2>
-          <p className="leading-relaxed text-base">Fingerstache flexitarian street art 8-bit waist co, subway tile poke farm.</p>
-        </div>
-      </div>
-      <div className="xl:w-1/3 md:w-1/2 p-4">
-        <div className="border border-gray-200 p-6 rounded-lg">
-          <div className="w-10 h-10 inline-flex items-center justify-center rounded-full bg-black-100 text-black-500 mb-4">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-6 h-6" viewBox="0 0 24 24">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-          </div>
-          <h2 className="text-lg text-gray-900 font-medium title-font mb-2">Ramona Falls</h2>
-          <p className="leading-relaxed text-base">Fingerstache flexitarian street art 8-bit waist co, subway tile poke farm.</p>
-        </div>
-      </div>
+      
     </div>
-    <button className="flex mx-auto mt-16 text-white bg-black-500 border-0 py-2 px-8 focus:outline-none hover:bg-black-600 rounded text-lg">Button</button>
-  </div>
-</section>
+    
+</MobileView>
+    
     </>
   )
+}
+
+
+export async function getServerSideProps(context) {
+  if(!mongoose.connections[0].readyState){
+  await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI); 
+}
+
+let products = await Product.find({category:"tshirt"}).limit(3);
+const t = []
+const array = products.map(product =>{t.push(product.img)})
+ 
+  
+  return {
+    props: {t: JSON.parse(JSON.stringify(t))}, // will be passed to the page component as props
+  }
 }

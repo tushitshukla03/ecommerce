@@ -3,13 +3,16 @@ import { useEffect, useState } from "react";
 import Product from "@/schema/Product";
 import mongoose from "mongoose";
 import { ToastContainer, toast } from 'react-toastify';
+import Error from "next/error";
 import 'react-toastify/dist/ReactToastify.css';
 
-const Post = ({buyNow,addToCart,product,varients}) => {
+const Post = ({buyNow,addToCart,product,varients,error}) => {
   // console.log(product,varients)
-  const [avaiColor, setAvaiColor]= useState(["white","red","black","pink","yellow","green","blue","purple"])
+  const [avaiColor, setAvaiColor]= useState(["white","red","black","pink","yellow","green","blue","purple","brown","orange",'peach','gray'])
+  const [login,setLogin] = useState(); 
   const router = useRouter();
   const { slug } = router.query;
+
   
   const [pin, setPin] = useState()
   const [service,setService] = useState()
@@ -18,9 +21,10 @@ const Post = ({buyNow,addToCart,product,varients}) => {
   }
 
   const checkService = async ()=>{
-    let pins = await fetch('http://localhost:3000/api/pincode');
+    let pins = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/pincode`);
     let pinJson = await pins.json();
-    if(pinJson.includes(parseInt(pin))){
+
+    if(Object.keys(pinJson).includes((pin))){
       setService(true);
       toast.success('Your Pincode is serviceable', {
         position: "bottom-center",
@@ -53,23 +57,46 @@ const Post = ({buyNow,addToCart,product,varients}) => {
 
   const refresh = (newsize,newcolor)=>{
     newsize=newsize.toLowerCase()
-    console.log(varients,newcolor,newsize)
-    let url = `http://localhost:3000/product/${varients[newcolor][newsize]['slug']}`
-    console.log(url)
+    let url = `${process.env.NEXT_PUBLIC_HOST}/product/${varients[newcolor][newsize]['slug']}`
+  
     window.location=url;
   }
 useEffect(()=>{
+  const fun = async()=>{
+       
+       
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({token: JSON.parse(localStorage.getItem('myuser')).token})
+        };
+        let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/verify`, requestOptions);
+        let response = await res.json();
+        if(response.success){
+          setLogin(true)
+        }
+      }
+  if(localStorage.getItem('myuser')){
+     fun()
+      
+  }
+  if(!error){
   setSize(product.size)
   setColor(product.color)
-},[])
+  }
+  
+},[]);
   
 
+if(error==404){
+  return <Error statusCode={error}/>
+}
   return (
     <>
       <section className="text-gray-600 body-font overflow-hidden">
       <ToastContainer
 position="bottom-center"
-autoClose={3000}
+autoClose={1000}
 hideProgressBar={false}
 newestOnTop={false}
 closeOnClick
@@ -203,10 +230,10 @@ theme="light"
                   <span className="mr-3">Size</span>
                   <div className="relative">
                     <select  value={size.toUpperCase()} onChange={(e)=>{refresh(e.target.value,color)}} className="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-500 text-base pl-3 pr-10">
-                      {Object.keys(varients[color]).includes('s') && <option>S</option>}
-                      {Object.keys(varients[color]).includes('m') && <option>M</option>}
-                      {Object.keys(varients[color]).includes('l') && <option>L</option>}
-                      {Object.keys(varients[color]).includes('xl')&& <option>XL</option>}
+                      {color && Object.keys(varients[color]).includes('s') && <option>S</option>}
+                      {color && Object.keys(varients[color]).includes('m') && <option>M</option>}
+                      {color && Object.keys(varients[color]).includes('l') && <option>L</option>}
+                      {color && Object.keys(varients[color]).includes('xl')&& <option>XL</option>}
                     </select>
                     <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
                       <svg
@@ -225,13 +252,34 @@ theme="light"
                 </div>
               </div>
               <div className="flex">
-                <span className="title-font font-medium text-2xl text-gray-900">
+                {product.availableQty>0 && <span className="title-font font-medium text-2xl text-gray-900">
                 ₹{product.price}
-                </span>
-                <button onClick={()=>{buyNow(slug,1, product.price,product.title, size.toUpperCase(), product.color[0].toUpperCase()+product.color.slice(1))}} className="flex ml-8 text-white bg-gray-500 border-0 py-2 px-0.5 md:px-6 focus:outline-none hover:bg-gray-600 rounded">
+                </span>}
+                {product.availableQty<=0 && <span className="title-font font-medium text-2xl text-gray-900">Out of stock!
+                </span>}
+                <button disabled={product.availableQty<=0 } onClick={()=>{ 
+                   if(!login){
+                    toast.warning('Please, login to continue!', {
+                      position: "bottom-center",
+                      autoClose: 1000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "light",
+                      });
+                      return
+                   }
+
+                  buyNow(slug,1, product.price,product.title, size.toUpperCase(), product.color[0].toUpperCase()+product.color.slice(1),product.seller,product.img)
+
+                }}
+
+                  className="flex ml-8 text-white bg-gray-500 border-0 disabled:bg-gray-300 py-2 px-3 md:px-6 focus:outline-none hover:bg-gray-600 rounded">
                   Buy Now
                 </button>
-                <button onClick={()=>addToCart(slug,1, product.price,product.title, size.toUpperCase(), product.color[0].toUpperCase()+product.color.slice(1))} className="flex ml-4 text-white bg-gray-500 border-0 py-2 px-2 md:px-6 focus:outline-none hover:bg-gray-600 rounded">
+                <button disabled={product.availableQty<=0} onClick={()=>addToCart(slug,1, product.price,product.title, size.toUpperCase(), product.color[0].toUpperCase()+product.color.slice(1),product.seller,product.img)} className="flex ml-4 text-white bg-gray-500 disabled:bg-gray-300 border-0 py-3 px-6 md:px-6 focus:outline-none hover:bg-gray-600 rounded">
                   Add to Cart
                 </button>
                 <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
@@ -258,7 +306,7 @@ theme="light"
                 </button>
                 
               </div>
-              {!service && service!= null && <div className='text-red-700 text-sm mt-3'>Sorry, We don't deliver to this pincode yet</div>}
+              {!service && service!= null && <div className='text-red-700 text-sm mt-3'>Sorry, We don&#39;t deliver to this pincode yet</div>}
               {service && service!= null && <div className='text-green-700 text-sm mt-3'>Yeah!!! This location is serviceable</div>}
             </div>
           </div>
@@ -268,11 +316,16 @@ theme="light"
   );
 };
 export async function getServerSideProps(context) {
+  let error = null;
   if(!mongoose.connections[0].readyState){
-  await mongoose.connect(process.env.MONGO_URI); 
+  await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI); 
 }
-console.log(context.query.slug);
+
 let product = await Product.findOne({slug:context.query.slug});
+if(product==null){
+  return {
+    props: {error: 404} }
+}
 let varients = await Product.find({title:product.title,category:product.category});
 let colorSize={}
 for(let item of varients){

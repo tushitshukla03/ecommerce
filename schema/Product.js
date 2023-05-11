@@ -15,9 +15,9 @@ const ProductSchema = new mongoose.Schema({
     color:{type:String},
     price:{type:Number,required:true},
     availableQty:{type:Number,required:true},
-    
     status:{type:String,
-    required:true,default:'Pending'}    
+    required:true,default:'Pending'},
+    seller:{type:String,default:""}  
 
 },{timestamps:true})
 

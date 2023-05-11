@@ -10,11 +10,12 @@ const handler = async (req,res)=>{
         slug:req.body[i].slug,
         desc:req.body[i].desc,
         img:req.body[i].img,
-        category:req.body[i].title,
+        category:req.body[i].category,
         size:req.body[i].size,
         color:req.body[i].color,
         price:req.body[i].price,
         availableQty:req.body[i].availableQty,
+        seller: jsonwebtoken.verify(req.body[i].seller,process.env.NEXT_PUBLIC_JSONWEBTOKEN).email,
         });
     await p.save()} 
     res.status(200).json({success:"success"})
